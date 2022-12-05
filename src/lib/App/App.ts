@@ -1,18 +1,16 @@
-import { Footer } from '../../components/Footer/Footer';
-import { Header } from '../../components/Header/Header';
 import { globalCss } from '../../stitches.config';
-import { Route } from '../../typings/global';
-import { execIfExists } from '../../utils/execIfExists';
+import { Context, Route } from '../../typings';
 import { getMatchRoute } from '../../utils/getMatchRoute';
+import { removeAllNodes } from '../../utils/removeAllNodes';
 
 type OnRouteChange = { url: URL };
 
-interface IApp<T> {
+interface IApp {
   routes: Route;
-  readonly context?: T;
+  context: Context;
 }
 
-const global = globalCss({
+globalCss({
   '*': {
     padding: '0',
     margin: '0',
@@ -35,15 +33,15 @@ const global = globalCss({
     margin: '0 auto',
     padding: '$sp1',
   },
-});
+})();
 
-export class App<T = Record<string, unknown>> {
+export class App {
   private app: HTMLElement | null = null;
-  private routerComponent: IComponent | null = null;
+  private fragment: DocumentFragment = new DocumentFragment();
   private routes: Route = {};
-  private context: T | undefined = undefined;
+  private context: Context | undefined = undefined;
 
-  constructor({ routes, context }: IApp<T>) {
+  constructor({ routes, context }: IApp) {
     this.routes = routes;
     this.context = context;
     this.init();
@@ -86,17 +84,16 @@ export class App<T = Record<string, unknown>> {
       getMatchRoute(route, url.pathname),
     );
 
-    execIfExists(this.routerComponent?.unmount?.bind(this));
+    removeAllNodes(this.app);
+    removeAllNodes(this.fragment);
 
     if (route) {
-      this.routerComponent = new this.routes[route](this.context);
+      this.routes[route].forEach((Component) => {
+        new Component(this.fragment, this.context);
+      });
     }
 
-    execIfExists(this.routerComponent?.mount?.bind(this));
-
-    if (this.app) {
-      this.app.innerHTML = this.render();
-    }
+    this.app?.append(this.fragment);
   }
 
   private onNavigate(event: MouseEvent) {
@@ -121,15 +118,5 @@ export class App<T = Record<string, unknown>> {
     });
 
     dispatchEvent(navigateEvent);
-  }
-
-  private render() {
-    return String.raw`
-        ${global()}
-
-        ${new Header().render()}
-        ${this.routerComponent?.render()}
-        ${new Footer().render()}
-    `;
   }
 }

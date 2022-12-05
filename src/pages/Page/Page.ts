@@ -1,27 +1,30 @@
 import { Link } from '../../components/Link/Link';
+import { IComponent } from '../../typings';
+import { createFragment } from '../../utils/createFragment';
 
 export class Page implements IComponent {
-  mount(): void {
-    console.log('mount page');
+  constructor(readonly fragment: DocumentFragment) {
+    this.fragment = fragment;
+    this.init();
   }
 
-  unmount(): void {
-    console.log('unmount page');
+  init() {
+    this.fragment.appendChild(createFragment(this.render()));
   }
 
   render(): string {
     return String.raw`
         <div class="content">
-            <h1>page</h1>
+            <h1 id="title">page</h1>
             <ul>
                 <li>
-                    ${new Link('Home', '/').render()}
+                  ${Link({ text: 'Home', href: '/' })}
                 </li>
                 <li>
-                    ${new Link('Page', '/page').render()}
+                  ${Link({ text: 'Page', href: '/page' })}
                 </li>
                 <li>
-                    ${new Link('Page with param', '/page/1').render()}
+                  ${Link({ text: 'Page with param', href: '/page/1' })}
                 </li>
             </ul>
         </div>    

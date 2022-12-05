@@ -1,4 +1,6 @@
 import { css } from '../../stitches.config';
+import { IComponent } from '../../typings';
+import { createFragment } from '../../utils/createFragment';
 
 const styles = css({
   padding: '$sp1',
@@ -19,6 +21,15 @@ const styles = css({
 });
 
 export class Header implements IComponent {
+  constructor(readonly fragment: DocumentFragment) {
+    this.fragment = fragment;
+    this.init();
+  }
+
+  init() {
+    this.fragment.appendChild(createFragment(this.render()));
+  }
+
   render(): string {
     return String.raw`
         <header class='${styles()}'>

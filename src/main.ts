@@ -1,20 +1,22 @@
+import { Footer } from './components/Footer/Footer';
+import { Header } from './components/Header/Header';
 import { App } from './lib/App/App';
+import { createContext } from './lib/Context/Context';
 import { Home } from './pages/Home/Home';
 import { Page } from './pages/Page/Page';
-
-export interface Context {
-  data: string[];
-}
+import { Context } from './typings';
 
 (() => {
-  new App<Context>({
+  const context = createContext<Context>({
+    data: ['user 1', 'user 2', 'user 3'],
+  });
+
+  new App({
     routes: {
-      '/': Home,
-      '/page': Page,
-      '/page/:id': Page,
+      '/': [Header, Home, Footer],
+      '/page': [Header, Page, Footer],
+      '/page/:id': [Header, Page, Footer],
     },
-    context: {
-      data: ['user 1', 'user 2'],
-    },
+    context,
   });
 })();

@@ -1,4 +1,6 @@
 import { css } from '../../stitches.config';
+import { IComponent } from '../../typings';
+import { createFragment } from '../../utils/createFragment';
 
 const styles = css({
   padding: '$sp1',
@@ -19,10 +21,19 @@ const styles = css({
 });
 
 export class Footer implements IComponent {
+  constructor(readonly fragment: DocumentFragment) {
+    this.fragment = fragment;
+    this.init();
+  }
+
+  init() {
+    this.fragment.appendChild(createFragment(this.render()));
+  }
+
   render(): string {
     return String.raw`
       <footer class='${styles()}'>
-          <h3>Footer</h3>
+          <h3 id="a">Footer</h3>
       </footer>
     `;
   }

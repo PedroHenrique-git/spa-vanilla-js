@@ -1,32 +1,31 @@
 import { Link } from '../../components/Link/Link';
-import { Context } from '../../main';
+import { Context, IComponent } from '../../typings';
+import { createFragment } from '../../utils/createFragment';
 
-export class Home implements IComponent<Context> {
-  constructor(public context?: Context) {
+export class Home implements IComponent {
+  constructor(
+    readonly fragment: DocumentFragment,
+    readonly context: Context | undefined,
+  ) {
+    this.fragment = fragment;
     this.context = context;
+    this.init();
   }
 
-  mount(): void {
-    console.log('mount home');
-    console.log('context --> ', this.context);
-  }
-
-  unmount(): void {
-    console.log('unmount home');
+  init() {
+    this.fragment.appendChild(createFragment(this.render()));
   }
 
   render(): string {
     return String.raw`
         <div class="content">
-            <div>
-                ${this.context?.data.join(' - ')}
-            </div>
+            ${this.context?.data.join(' - ')}
             <ul>
                 <li>
-                    ${new Link('Home', '/').render()}
+                    ${Link({ text: 'Home', href: '/' })}
                 </li>
                 <li>
-                    ${new Link('Page', '/page').render()}
+                    ${Link({ text: 'Page', href: '/page' })}
                 </li>
             </ul>
         </div>
