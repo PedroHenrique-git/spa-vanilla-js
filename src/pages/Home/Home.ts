@@ -1,25 +1,48 @@
 import { Link } from '../../components/Link/Link';
-import { Context, IComponent } from '../../typings';
+import { Context } from '../../lib/Context/Context';
+import { ContextData, IComponent } from '../../typings';
 import { createFragment } from '../../utils/createFragment';
 
 export class Home implements IComponent {
+  readonly fragment: DocumentFragment;
+  private button: HTMLElement | null = null;
+
   constructor(
-    readonly fragment: DocumentFragment,
-    readonly context: Context | undefined,
+    readonly rootFragment: DocumentFragment,
+    readonly context: Context<ContextData> | undefined,
   ) {
-    this.fragment = fragment;
+    this.rootFragment = rootFragment;
+    this.fragment = createFragment(this.render());
     this.context = context;
     this.init();
   }
 
   init() {
-    this.fragment.appendChild(createFragment(this.render()));
+    this.rootFragment.appendChild(this.fragment);
+
+    this.selectors();
+    this.events();
+  }
+
+  selectors(): void {
+    this.button = this.rootFragment.querySelector('#update-button');
+  }
+
+  events(): void {
+    this.button?.addEventListener('click', () => {
+      this.context?.set(
+        'data',
+        ['user 4', 'user 5', 'user 6', 'user 7'],
+        Home.name,
+      );
+    });
   }
 
   render(): string {
     return String.raw`
         <div class="content">
-            ${this.context?.data.join(' - ')}
+            ${this.context?.get('data').join(' - ')}
+            <button id="update-button">update context</button>
             <ul>
                 <li>
                     ${Link({ text: 'Home', href: '/' })}

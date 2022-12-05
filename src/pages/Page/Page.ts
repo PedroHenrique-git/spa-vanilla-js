@@ -3,13 +3,16 @@ import { IComponent } from '../../typings';
 import { createFragment } from '../../utils/createFragment';
 
 export class Page implements IComponent {
-  constructor(readonly fragment: DocumentFragment) {
-    this.fragment = fragment;
+  readonly fragment: DocumentFragment;
+
+  constructor(readonly rootFragment: DocumentFragment) {
+    this.rootFragment = rootFragment;
+    this.fragment = createFragment(this.render());
     this.init();
   }
 
   init() {
-    this.fragment.appendChild(createFragment(this.render()));
+    this.rootFragment.appendChild(this.fragment);
   }
 
   render(): string {
