@@ -21,20 +21,23 @@ const styles = css({
 });
 
 export class Header implements IComponent {
-  constructor(readonly fragment: DocumentFragment) {
-    this.fragment = fragment;
+  readonly fragment: DocumentFragment;
+
+  constructor(readonly rootFragment: DocumentFragment) {
+    this.rootFragment = rootFragment;
+    this.fragment = createFragment(this.render());
     this.init();
   }
 
   init() {
-    this.fragment.appendChild(createFragment(this.render()));
+    this.rootFragment.appendChild(this.fragment);
   }
 
   render(): string {
     return String.raw`
-        <header class='${styles()}'>
-            <h1>Header</h1>
-        </header>
+      <header class='${styles()}'>
+        <h1>Header</h1>
+      </header>
     `;
   }
 }

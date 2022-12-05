@@ -1,13 +1,14 @@
 import { globalCss } from '../../stitches.config';
-import { Context, Route } from '../../typings';
+import { Route } from '../../typings';
 import { getMatchRoute } from '../../utils/getMatchRoute';
 import { removeAllNodes } from '../../utils/removeAllNodes';
+import { Context } from '../Context/Context';
 
 type OnRouteChange = { url: URL };
 
-interface IApp {
+interface IApp<T> {
   routes: Route;
-  context: Context;
+  context: Context<T>;
 }
 
 globalCss({
@@ -35,13 +36,14 @@ globalCss({
   },
 })();
 
-export class App {
+export class App<T> {
   private app: HTMLElement | null = null;
-  private fragment: DocumentFragment = new DocumentFragment();
-  private routes: Route = {};
-  private context: Context | undefined = undefined;
+  private rootFragment: DocumentFragment = new DocumentFragment();
+  private routes: Route<T> = {};
+  private context: Context<T> | undefined = undefined;
+  private route: string | undefined = '/';
 
-  constructor({ routes, context }: IApp) {
+  constructor({ routes, context }: IApp<T>) {
     this.routes = routes;
     this.context = context;
     this.init();
@@ -52,6 +54,7 @@ export class App {
     this.handleRoute();
     this.handleRoutes();
     this.dispatchNavigationEvent();
+    this.rerender();
   }
 
   private createApp() {
@@ -80,20 +83,20 @@ export class App {
     const url = event.detail.url;
     const routesPaths = Object.keys(this.routes);
 
-    const route = routesPaths.find((route) =>
+    this.route = routesPaths.find((route) =>
       getMatchRoute(route, url.pathname),
     );
 
     removeAllNodes(this.app);
-    removeAllNodes(this.fragment);
+    removeAllNodes(this.rootFragment);
 
-    if (route) {
-      this.routes[route].forEach((Component) => {
-        new Component(this.fragment, this.context);
+    if (this.route) {
+      this.routes[this.route].forEach((Component) => {
+        new Component(this.rootFragment, this.context);
       });
     }
 
-    this.app?.append(this.fragment);
+    this.app?.append(this.rootFragment);
   }
 
   private onNavigate(event: MouseEvent) {
@@ -118,5 +121,25 @@ export class App {
     });
 
     dispatchEvent(navigateEvent);
+  }
+
+  private rerender() {
+    window.addEventListener('rerender', (event) => {
+      const {
+        detail: { componentName },
+      } = event as CustomEvent<{ componentName: string }>;
+
+      if (this.route) {
+        const Component = this.routes[this.route].find(
+          (Component) => Component.name === componentName,
+        );
+
+        if (Component) new Component(this.rootFragment, this.context);
+
+        console.log('Component --> ', Component);
+
+        alert('rerender');
+      }
+    });
   }
 }

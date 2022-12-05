@@ -4,14 +4,14 @@ import { App } from './lib/App/App';
 import { createContext } from './lib/Context/Context';
 import { Home } from './pages/Home/Home';
 import { Page } from './pages/Page/Page';
-import { Context } from './typings';
+import { ContextData } from './typings';
 
 (() => {
-  const context = createContext<Context>({
+  const context = createContext<ContextData>({
     data: ['user 1', 'user 2', 'user 3'],
   });
 
-  new App({
+  new App<ContextData>({
     routes: {
       '/': [Header, Home, Footer],
       '/page': [Header, Page, Footer],
