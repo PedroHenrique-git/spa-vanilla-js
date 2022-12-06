@@ -115,16 +115,13 @@ export class App<T> {
   }
 
   private rerender() {
-    removeAllNodes(this.app);
-    removeAllNodes(this.rootFragment);
-
     if (this.route) {
       this.routes[this.route].forEach((Component) => {
         new Component(this.rootFragment, this.context);
       });
     }
 
-    this.app?.append(this.rootFragment);
+    this.app?.replaceChildren(this.rootFragment);
   }
 
   private rerenderListener() {
