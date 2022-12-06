@@ -7,7 +7,7 @@ import { Context } from '../Context/Context';
 type OnRouteChange = { url: URL };
 
 interface IApp<T> {
-  routes: Route;
+  routes: Route<T>;
   context: Context<T>;
 }
 
@@ -54,7 +54,7 @@ export class App<T> {
     this.handleRoute();
     this.handleRoutes();
     this.dispatchNavigationEvent();
-    this.rerender();
+    this.rerenderListener();
   }
 
   private createApp() {
@@ -87,16 +87,7 @@ export class App<T> {
       getMatchRoute(route, url.pathname),
     );
 
-    removeAllNodes(this.app);
-    removeAllNodes(this.rootFragment);
-
-    if (this.route) {
-      this.routes[this.route].forEach((Component) => {
-        new Component(this.rootFragment, this.context);
-      });
-    }
-
-    this.app?.append(this.rootFragment);
+    this.rerender();
   }
 
   private onNavigate(event: MouseEvent) {
@@ -124,22 +115,19 @@ export class App<T> {
   }
 
   private rerender() {
-    window.addEventListener('rerender', (event) => {
-      const {
-        detail: { componentName },
-      } = event as CustomEvent<{ componentName: string }>;
+    removeAllNodes(this.app);
+    removeAllNodes(this.rootFragment);
 
-      if (this.route) {
-        const Component = this.routes[this.route].find(
-          (Component) => Component.name === componentName,
-        );
+    if (this.route) {
+      this.routes[this.route].forEach((Component) => {
+        new Component(this.rootFragment, this.context);
+      });
+    }
 
-        if (Component) new Component(this.rootFragment, this.context);
+    this.app?.append(this.rootFragment);
+  }
 
-        console.log('Component --> ', Component);
-
-        alert('rerender');
-      }
-    });
+  private rerenderListener() {
+    window.addEventListener('rerender', this.rerender.bind(this));
   }
 }
