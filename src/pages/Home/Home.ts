@@ -5,7 +5,8 @@ import { createFragment } from '../../utils/createFragment';
 
 export class Home implements IComponent {
   readonly fragment: DocumentFragment;
-  private button: HTMLElement | null = null;
+  private increase: HTMLElement | null = null;
+  private decrease: HTMLElement | null = null;
 
   constructor(
     readonly rootFragment: DocumentFragment,
@@ -25,24 +26,26 @@ export class Home implements IComponent {
   }
 
   selectors(): void {
-    this.button = this.rootFragment.querySelector('#update-button');
+    this.increase = this.rootFragment.querySelector('#increase');
+    this.decrease = this.rootFragment.querySelector('#decrease');
   }
 
   events(): void {
-    this.button?.addEventListener('click', () => {
-      this.context?.set(
-        'data',
-        ['pedro', 'joao', 'luiz', 'henrique'],
-        Home.name,
-      );
+    this.increase?.addEventListener('click', () => {
+      this.context?.set('count', this.context?.get('count') + 1, Home.name);
+    });
+
+    this.decrease?.addEventListener('click', () => {
+      this.context?.set('count', this.context?.get('count') - 1, Home.name);
     });
   }
 
   render(): string {
     return String.raw`
         <div class="content">
-            ${this.context?.get('data').join(' - ')}
-            <button id="update-button">update context</button>
+            ${this.context?.get('count')}
+            <button id="increase">+</button>
+            <button id="decrease">-</button>
             <ul>
                 <li>
                     ${Link({ text: 'Home', href: '/' })}

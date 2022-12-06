@@ -8,7 +8,7 @@ import { ContextData } from './typings';
 
 (() => {
   const context = createContext<ContextData>({
-    data: ['user 1', 'user 2', 'user 3'],
+    count: 0,
   });
 
   new App<ContextData>({

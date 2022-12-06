@@ -16,5 +16,5 @@ export interface Component<T> {
 }
 
 export interface ContextData {
-  data: string[];
+  count: number;
 }
