@@ -32,7 +32,7 @@ export class Home implements IComponent {
     this.button?.addEventListener('click', () => {
       this.context?.set(
         'data',
-        ['user 4', 'user 5', 'user 6', 'user 7'],
+        ['pedro', 'joao', 'luiz', 'henrique'],
         Home.name,
       );
     });
