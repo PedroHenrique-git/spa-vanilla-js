@@ -1,16 +1,20 @@
-import uuid from 'uuid-browser';
 import { Observable, Observer, State } from '../State/State';
 import { createFragment } from '../utils/createFragment';
+import { updateComponentRegister } from '../utils/updateComponentRegister';
 
-export abstract class Component<T = Record<string, unknown>>
-  implements Observer
+export abstract class Component<
+  T extends Record<string, unknown> = Record<string, unknown>,
+> implements Observer
 {
   private _state: State<T> | null = null;
   private template: DocumentFragment = new DocumentFragment();
-  protected key: string = uuid();
+  protected key: number;
 
   constructor(private root: HTMLElement | null, state?: State<T>) {
+    updateComponentRegister<T>(this);
+
     this.root = root;
+    this.key = window.nextId;
 
     if (state) this.initializeState(state);
   }
