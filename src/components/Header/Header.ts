@@ -1,43 +1,12 @@
-import { css } from '../../stitches.config';
-import { IComponent } from '../../typings';
-import { createFragment } from '../../utils/createFragment';
+import { Component } from '../../lib/Component/Component';
 
-const styles = css({
-  padding: '$sp1',
-  background: '$white',
-  width: '100%',
-  borderBottom: '1px solid $gray',
-
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-
-  h1: {
-    color: '$black',
-    fontFamily: '$principal',
-    fontWeight: '$medium',
-    fontSize: 'medium',
-  },
-});
-
-export class Header implements IComponent {
-  readonly fragment: DocumentFragment;
-
-  constructor(readonly rootFragment: DocumentFragment) {
-    this.rootFragment = rootFragment;
-    this.fragment = createFragment(this.render());
-    this.init();
-  }
-
-  init() {
-    this.rootFragment.appendChild(this.fragment);
-  }
-
+export class Header extends Component<{ data: string[] }> {
   render(): string {
     return String.raw`
-      <header class='${styles()}'>
-        <h1>Header</h1>
-      </header>
+        <div key='${this.key}'>
+            <button>update context</button>
+            <div>${JSON.stringify(this.getState()?.data)}</div>
+        </div>
     `;
   }
 }
