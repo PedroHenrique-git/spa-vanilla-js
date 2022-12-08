@@ -1,22 +1,39 @@
-import { Footer } from './components/Footer/Footer';
-import { Header } from './components/Header/Header';
-import { App } from './lib/App/App';
-import { createContext } from './lib/Context/Context';
-import { Home } from './pages/Home/Home';
-import { Page } from './pages/Page/Page';
-import { ContextData } from './typings';
+import { Example } from './components/Example/Example';
+import { Router } from './lib/Router/Router';
+import { State } from './lib/State/State';
+import { createContainer } from './lib/utils/createContainer';
+import { globalStyles } from './styles';
 
-(() => {
-  const context = createContext<ContextData>({
-    count: 0,
-  });
+globalStyles();
 
-  new App<ContextData>({
-    routes: {
-      '/': [Header, Home, Footer],
-      '/page': [Header, Page, Footer],
-      '/page/:id': [Header, Page, Footer],
-    },
-    context,
+const app = document.getElementById('app');
+
+const Page1: Page = () => {
+  createContainer('div', app, (container) => {
+    new Example(container, new State({ count: 0 }));
   });
-})();
+};
+
+const Page2: Page = () => {
+  createContainer('div', app, (container) => {
+    new Example(container);
+    new Example(container, new State({ count: 0 }));
+  });
+};
+
+const Page3: Page = () => {
+  createContainer('main', app, (container) => {
+    new Example(container);
+    new Example(container, new State({ count: 0 }));
+    new Example(container);
+  });
+};
+
+new Router(
+  {
+    '/': Page1,
+    '/page/:id': Page2,
+    '/page/:id/:id': Page3,
+  },
+  app,
+);
