@@ -1,3 +1,4 @@
+import { baseURL } from '../../constants';
 import { Component } from '../../lib/Component/Component';
 import { css } from '../../stitches.config';
 
@@ -52,13 +53,13 @@ export class Example extends Component<{ count: number }> {
 
           <ul>
             <li>
-              <a href="/" route>/</a>
+              <a href="${baseURL}" route>/</a>
             </li>
             <li>
-              <a href="/page/1" route>/page/:id</a>  
+              <a href="${baseURL}page/1" route>/page/:id</a>  
             </li>
             <li>
-              <a href="/page/1/2?name=teste&age=0" route>/page/:id/:id</a>    
+              <a href="${baseURL}page/1/2?name=teste&age=0" route>/page/:id/:id</a>    
             </li>
           </ul>
       </div>
