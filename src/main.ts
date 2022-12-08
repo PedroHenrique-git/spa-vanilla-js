@@ -1,4 +1,5 @@
 import { Example } from './components/Example/Example';
+import { baseURL } from './constants';
 import { Router } from './lib/Router/Router';
 import { State } from './lib/State/State';
 import { createContainer } from './lib/utils/createContainer';
@@ -31,9 +32,9 @@ const Page3: Page = () => {
 
 new Router(
   {
-    '/': Page1,
-    '/page/:id': Page2,
-    '/page/:id/:id': Page3,
+    [`${baseURL}`]: Page1,
+    [`${baseURL}page/:id`]: Page2,
+    [`${baseURL}page/:id/:id`]: Page3,
   },
   app,
 );
