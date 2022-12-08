@@ -1,43 +1,39 @@
-import { Header } from './components/Header/Header';
+import { Example } from './components/Example/Example';
+import { Router } from './lib/Router/Router';
 import { State } from './lib/State/State';
+import { createContainer } from './lib/utils/createContainer';
+import { globalStyles } from './styles';
 
-const cp1 = new Header(
-  document.getElementById('app'),
-  new State<{ data: string[] }>({
-    data: ['user 1', 'user 2', 'user 3'],
-  }),
+globalStyles();
+
+const app = document.getElementById('app');
+
+const Page1: Page = () => {
+  createContainer('div', app, (container) => {
+    new Example(container, new State({ count: 0 }));
+  });
+};
+
+const Page2: Page = () => {
+  createContainer('div', app, (container) => {
+    new Example(container);
+    new Example(container, new State({ count: 0 }));
+  });
+};
+
+const Page3: Page = () => {
+  createContainer('main', app, (container) => {
+    new Example(container);
+    new Example(container, new State({ count: 0 }));
+    new Example(container);
+  });
+};
+
+new Router(
+  {
+    '/': Page1,
+    '/page/:id': Page2,
+    '/page/:id/:id': Page3,
+  },
+  app,
 );
-
-const cp2 = new Header(
-  document.getElementById('app'),
-  new State<{ data: string[] }>({
-    data: ['user 1', 'user 2', 'user 3'],
-  }),
-);
-
-const cp3 = new Header(
-  document.getElementById('app'),
-  new State<{ data: string[] }>({
-    data: ['user 1', 'user 2', 'user 3'],
-  }),
-);
-
-const buttons = document.querySelectorAll('button');
-
-buttons[0]?.addEventListener('click', () => {
-  alert('update state');
-
-  cp1.setState({ data: ['user 5'] });
-});
-
-buttons[1]?.addEventListener('click', () => {
-  alert('update state');
-
-  cp2.setState({ data: ['user 5'] });
-});
-
-buttons[2]?.addEventListener('click', () => {
-  alert('update state');
-
-  cp3.setState({ data: ['user 5', 'user 6', 'user 5'] });
-});

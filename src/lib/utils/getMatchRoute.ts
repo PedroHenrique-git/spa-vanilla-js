@@ -1,5 +1,5 @@
-import { pathToRegexp } from 'path-to-regexp';
+import { getRegexRoute } from './getRegexRoute';
 
 export function getMatchRoute(route: string, path: string) {
-  return path.match(pathToRegexp(route));
+  return path.match(getRegexRoute(route));
 }
