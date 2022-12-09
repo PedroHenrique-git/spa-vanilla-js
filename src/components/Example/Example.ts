@@ -44,10 +44,14 @@ export class Example extends Component<{ count: number }> {
 
   render(): string {
     return String.raw`
-      <div class="${exampleStyles()}">
+      <div class="${exampleStyles()}" key="${this.key}">
           <div>
             <button id='increase-${this.key}'>increase</button>
-            <div>${JSON.stringify(this.getState()?.count)}</div>
+            <div>${
+              this.getState()?.count !== undefined
+                ? this.getState()?.count
+                : 'without state'
+            }</div>
             <button id='decrease-${this.key}'>decrease</button>
           </div>
 

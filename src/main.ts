@@ -11,13 +11,20 @@ const app = document.getElementById('app');
 
 const Page1: Page = () => {
   createContainer('div', app, (container) => {
-    new Example(container, new State({ count: 0 }));
+    new Example(container, new State({ count: 0 }), [
+      [Example, undefined],
+      [Example, new State({ count: 0 })],
+      [Example, undefined],
+    ]);
   });
 };
 
 const Page2: Page = () => {
   createContainer('div', app, (container) => {
-    new Example(container);
+    new Example(container, new State({ count: 0 }), [
+      [Example, undefined],
+      [Example, undefined],
+    ]);
     new Example(container, new State({ count: 0 }));
   });
 };

@@ -17,6 +17,16 @@ type RouteData = {
   queryParams: URLSearchParams;
 };
 
-type DOMElement = HTMLElement | null | undefined;
+type DOMElement = HTMLElement | Element | null | undefined;
 
 type Page = (_routeData?: RouteData) => void;
+
+type Children = Array<[Child, ChildState, Children?]>;
+
+type ChildState = import('../lib/State/State').State<T> | undefined;
+
+type Child = new (
+  protected _root: HTMLElement | Element | DocumentFragment,
+  _state?: import('../lib/State/State').State<T>,
+  private _children?: Children,
+) => import('../lib/Component/Component').Component;

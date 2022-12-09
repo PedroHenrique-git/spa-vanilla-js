@@ -12,32 +12,61 @@ export abstract class Component<
 {
   private _state: State<T> | null = null;
   private template: DocumentFragment = new DocumentFragment();
+  private reference: Element | null = null;
+  private childrenReference: Component[] = [];
   protected key: number;
 
-  constructor(protected root: HTMLElement | null, state?: State<T>) {
+  constructor(
+    protected root: HTMLElement | Element | DocumentFragment,
+    state?: State<T>,
+    private children?: Children,
+  ) {
     updateComponentRegister<T>(this);
 
+    if (!root) {
+      throw new Error('root was not provided');
+    }
+
     this.root = root;
-    this.key = window.nextId;
+    this.key = this.root.children.length;
 
     if (state) {
       this.initializeWithState(state);
     } else {
       this.initializeWithoutState();
     }
+
+    this.reference = this.root.children.item(this.key);
+
+    if (children) {
+      this.children = children;
+    }
   }
 
   private initializeWithState(state: State<T>) {
+    this.firstRender();
+
     this._state = state;
     this._state.subscribe(this);
     this._state.notify();
   }
 
   private initializeWithoutState() {
-    this.template = createFragment(this.render());
-    this.root?.append(this.template);
-
+    this.firstRender();
     this.initializeEventsAndSelectors();
+  }
+
+  private mountChildren(isRerender = false) {
+    if (!this.children) return;
+
+    if (isRerender) {
+      this.rerenderChildren();
+      this.clearOldChildren();
+
+      return;
+    }
+
+    this.renderChildren();
   }
 
   initializeEventsAndSelectors() {
@@ -67,17 +96,65 @@ export abstract class Component<
     }
   }
 
-  private rerender() {
+  private renderChildren() {
+    if (!this.children) return;
+
+    for (const child of this.children) {
+      const [Component, State] = child;
+
+      if (this.reference) {
+        const component = new Component(this.reference, State);
+        this.childrenReference.push(component);
+      }
+    }
+  }
+
+  private rerenderChildren() {
+    if (!this.children) return;
+
+    this.children.forEach((child, index) => {
+      const [Component, DefaultState] = child;
+
+      const oldState = this.childrenReference[index]?.getState();
+      const newState = oldState ? new State(oldState) : DefaultState;
+
+      if (this.reference) {
+        const component = new Component(this.reference, newState);
+        this.childrenReference.push(component);
+      }
+    });
+  }
+
+  private firstRender() {
     this.template = createFragment(this.render());
-    const oldComponent = this.root?.children[this.key - 1];
-
-    if (!this?.root) return;
-
-    if (this.root.children.length && oldComponent)
-      this.root.replaceChild(this.template, oldComponent);
-    else this.root.append(this.template);
+    this.root.append(this.template);
+    this.reference = this.root.children.item(this.key);
 
     this.initializeEventsAndSelectors();
+    this.mountChildren();
+  }
+
+  private rerender() {
+    this.template = createFragment(this.render());
+
+    // REFERENCE BEFORE RERENDER
+    this.reference = this.root.children.item(this.key);
+
+    if (this.root.children.length && this.reference)
+      this.root.replaceChild(this.template, this.reference);
+
+    // REFERENCE AFTER RERENDER
+    this.reference = this.root.children.item(this.key);
+
+    this.mountChildren(true);
+    this.initializeEventsAndSelectors();
+  }
+
+  private clearOldChildren() {
+    if (!this.children) return;
+
+    while (this.childrenReference.length !== this.children.length)
+      this.childrenReference.shift();
   }
 
   abstract render(): string;
