@@ -6,6 +6,16 @@ interface Window extends Window {
   nextId: number;
 }
 
+interface Observer {
+  update(_observable: Observable): void;
+}
+
+interface Observable {
+  subscribe(..._observers: Observer[]): void;
+  unsubscribe(_observer: Observer): void;
+  notify(): void;
+}
+
 type Page = (_routeData?: RouteData) => void;
 
 type Route = Record<string, Page>;
@@ -21,12 +31,17 @@ type DOMElement = HTMLElement | Element | null | undefined;
 
 type Page = (_routeData?: RouteData) => void;
 
-type Children = Array<[Child, ChildState, Children?]>;
+type Children = Array<[Child, ChildState?, Props?]>;
 
-type ChildState = import('../lib/State/State').State<T> | undefined;
+type ChildState = State<T> | undefined;
+
+type Props<U> = U | null;
+
+type State<T> = import('../lib/State/State').State<T>;
 
 type Child = new (
   protected _root: HTMLElement | Element | DocumentFragment,
-  _state?: import('../lib/State/State').State<T>,
+  _state?: State,
+  _props?: Props,
   private _children?: Children,
 ) => import('../lib/Component/Component').Component;

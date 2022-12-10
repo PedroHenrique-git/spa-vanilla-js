@@ -1,3 +1,4 @@
+import { dispatchNavigationEvent } from '../utils/dispatchNavigationEvent';
 import { getMatchRoute } from '../utils/getMatchRoute';
 import { getRegexRoute } from '../utils/getRegexRoute';
 import { resetComponentRegister } from '../utils/updateComponentRegister';
@@ -14,11 +15,19 @@ export class Router {
 
     this.handleRoutes();
     this.handleRoute();
+    this.handlePopState();
     this.init();
   }
 
   private init() {
     this.dispatchNavigationEvent();
+  }
+
+  private handlePopState() {
+    window.addEventListener(
+      'popstate',
+      this.dispatchNavigationEvent.bind(this),
+    );
   }
 
   private handleRoutes() {
@@ -68,15 +77,6 @@ export class Router {
   }
 
   private dispatchNavigationEvent() {
-    const navigationEvent = new CustomEvent<Navigation>('changeRoute', {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      detail: {
-        url: new URL(window.location.href),
-      },
-    });
-
-    dispatchEvent(navigationEvent);
+    dispatchNavigationEvent();
   }
 }
