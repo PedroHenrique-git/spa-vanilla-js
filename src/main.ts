@@ -1,40 +1,54 @@
-import { Example } from './components/Example/Example';
 import { baseURL } from './constants';
 import { Router } from './lib/Router/Router';
 import { State } from './lib/State/State';
-import { createContainer } from './lib/utils/createContainer';
+import { EditTaskPage } from './pages/EditTask/EditTask';
+import { Index } from './pages/Index';
 import { globalStyles } from './styles';
 
 globalStyles();
 
-const app = document.getElementById('app');
+export type TaskStatus = 'done' | 'In progress';
 
-const Page1: Page = () => {
-  createContainer('div', app, (container) => {
-    new Example(container, new State({ count: 0 }));
-  });
+export type Task = {
+  name: string;
+  status: TaskStatus;
 };
 
-const Page2: Page = () => {
-  createContainer('div', app, (container) => {
-    new Example(container);
-    new Example(container, new State({ count: 0 }));
-  });
+export type Context = {
+  tasks: Task[];
+  selectedTask: { task: Task | null | undefined; id: number } | null;
 };
 
-const Page3: Page = () => {
-  createContainer('main', app, (container) => {
-    new Example(container);
-    new Example(container, new State({ count: 0 }));
-    new Example(container);
-  });
+const initialState: Context = {
+  tasks: [
+    {
+      name: 'buy rice',
+      status: 'In progress',
+    },
+    {
+      name: 'study english',
+      status: 'done',
+    },
+    {
+      name: 'go to the gym',
+      status: 'In progress',
+    },
+    {
+      name: 'walk the dog',
+      status: 'done',
+    },
+  ],
+  selectedTask: null,
 };
+
+export const app = document.getElementById('app');
+
+export const tasksState = new State<Context>(initialState);
 
 new Router(
   {
-    [`${baseURL}`]: Page1,
-    [`${baseURL}page/:id`]: Page2,
-    [`${baseURL}page/:id/:id`]: Page3,
+    [`${baseURL}`]: Index,
+    [`${baseURL}task/:id`]: EditTaskPage,
   },
   app,
 );

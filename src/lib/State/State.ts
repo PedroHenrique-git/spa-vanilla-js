@@ -1,13 +1,3 @@
-export interface Observer {
-  update(_observable: Observable): void;
-}
-
-export interface Observable {
-  subscribe(..._observers: Observer[]): void;
-  unsubscribe(_observer: Observer): void;
-  notify(): void;
-}
-
 export class State<T = Record<string, unknown>> implements Observable {
   private observers: Observer[] = [];
   private _state: T | null = null;
