@@ -1,3 +1,3 @@
 ## spa vanilla js
 
-a simple spa using only vanilla js
+a template to build spa using only vanilla js
