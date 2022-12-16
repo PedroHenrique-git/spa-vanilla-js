@@ -1,5 +1,5 @@
+import { Component } from 'spa-vanilla';
 import { baseURL } from '../../constants';
-import { Component } from '../../lib/Component/Component';
 import { Context } from '../../main';
 import { css } from '../../stitches.config';
 

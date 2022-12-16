@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@stitches/core": "^1.2.8",
-    "path-to-regexp": "^6.2.1"
+    "path-to-regexp": "^6.2.1",
+    "spa-vanilla": "^1.0.0"
   }
 }
