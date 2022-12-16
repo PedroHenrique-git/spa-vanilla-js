@@ -1,6 +1,5 @@
+import { Router, State } from 'spa-vanilla';
 import { baseURL } from './constants';
-import { Router } from './lib/Router/Router';
-import { State } from './lib/State/State';
 import { EditTaskPage } from './pages/EditTask/EditTask';
 import { Index } from './pages/Index';
 import { globalStyles } from './styles';

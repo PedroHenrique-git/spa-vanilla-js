@@ -5,7 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite && vite build --watch",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "format": "prettier --write \"**/*.{ts,js,json}\"",
@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "@stitches/core": "^1.2.8",
-    "path-to-regexp": "^6.2.1"
+    "cpf-is-valid": "^1.0.2",
+    "path-to-regexp": "^6.2.1",
+    "spa-vanilla": "^1.0.0"
   }
 }

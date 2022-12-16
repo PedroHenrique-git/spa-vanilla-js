@@ -1,6 +1,5 @@
+import { changeRoute, Component } from 'spa-vanilla';
 import { baseURL } from '../../constants';
-import { Component } from '../../lib/Component/Component';
-import { changeRoute } from '../../lib/utils/changeRoute';
 import { Context, Task, TaskStatus } from '../../main';
 import { css } from '../../stitches.config';
 

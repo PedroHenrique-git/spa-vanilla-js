@@ -1,4 +1,4 @@
-import { Component } from '../../lib/Component/Component';
+import { Component } from 'spa-vanilla';
 import { css } from '../../stitches.config';
 
 const headerStyles = css({
